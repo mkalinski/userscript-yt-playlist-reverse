@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        yt-playlist-reverse
 // @namespace   https://github.com/mkalinski
-// @version     1.0.0
+// @version     1.0.1
 // @description Reverses the order of youtube playlist traversal.
 // @match       https://www.youtube.com/watch
 // @grant       GM_getValue
@@ -54,10 +54,11 @@
     function clearAutoReverse() {
         autoReversePlaylists = new Set();
         setAutoListMenuAdd();
-        updateAutoReversePlaylists();
+        resetClearMenu();
+        GM_deleteValue(AUTO_LISTS_STORAGE_KEY);
     }
 
-    if (autoReversePlaylists.size > 0) {
+    if (autoReversePlaylists.size) {
         setClearMenu();
     }
 
@@ -233,13 +234,13 @@
     }
 
     function updateAutoReversePlaylists() {
-        const orderedDump = Array.from(autoReversePlaylists).sort();
-        GM_setValue(AUTO_LISTS_STORAGE_KEY, orderedDump);
-
-        if (orderedDump.length > 0) {
+        if (autoReversePlaylists.size) {
+            const orderedDump = Array.from(autoReversePlaylists).sort();
             setClearMenu();
+            GM_setValue(AUTO_LISTS_STORAGE_KEY, orderedDump);
         } else {
             resetClearMenu();
+            GM_deleteValue(AUTO_LISTS_STORAGE_KEY);
         }
     }
 
@@ -248,18 +249,20 @@
             return;
         }
 
-        autoReversePlaylists = new Set(newValue);
+        autoReversePlaylists = new Set(newValue || []);
+
+        if (!autoReversePlaylists.size) {
+            setAutoListMenuAdd();
+            resetClearMenu();
+            return;
+        }
+
+        setClearMenu();
 
         if (autoReversePlaylists.has(currentPlaylist)) {
             setAutoListMenuRemove();
         } else {
             setAutoListMenuAdd();
-        }
-
-        if (autoReversePlaylists.size > 0) {
-            setClearMenu();
-        } else {
-            resetClearMenu();
         }
     }
 
