@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name        yt-playlist-reverse
 // @namespace   https://github.com/mkalinski
-// @version     1.0.1
+// @version     1.1.0
 // @description Reverses the order of youtube playlist traversal.
-// @match       https://www.youtube.com/watch
+// @match       https://www.youtube.com
 // @grant       GM_getValue
 // @grant       GM_setValue
 // @grant       GM_deleteValue
